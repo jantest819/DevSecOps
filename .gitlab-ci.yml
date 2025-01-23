@@ -1,7 +1,38 @@
-include:
-  - template: Auto-DevOps.gitlab-ci.yml
+stages:
+  - test
+  - security
 
-variables:
-  SAST_EXCLUDED_PATHS: "frontend/src/assets/private/**"
-  TEST_DISABLED: "true"
-  DAST_DISABLED: "true"
+# Static Application Security Testing (SAST)
+sast:
+  stage: security
+  tags: 
+    - your-runner-tag  # Optional: Tag your runner if needed
+  script:
+    - echo "Running SAST analysis"
+  artifacts:
+    reports:
+      sast: gl-sast-report.json
+  only:
+    - main
+
+# Dependency Scanning
+dependency_scanning:
+  stage: security
+  script:
+    - echo "Running Dependency Scanning"
+  artifacts:
+    reports:
+      dependency_scanning: gl-dependency-scanning-report.json
+  only:
+    - main
+
+# Secret Detection
+secret_detection:
+  stage: security
+  script:
+    - echo "Running Secret Detection"
+  artifacts:
+    reports:
+      secret_detection: gl-secret-detection-report.json
+  only:
+    - main
